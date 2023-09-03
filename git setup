@@ -48,3 +48,9 @@ Setup git:
 The final outcome is the code from respective branch should be reflecting in main branch.
 
 
+12. Git pull to get latest code in local repo
+# git checkout main 
+# git fetch 
+# git pull
+
+
