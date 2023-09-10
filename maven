@@ -24,6 +24,8 @@ java -version
 Now install setup Maven:
 sudo apt install maven
 
+If java and maven already isntalled, try the below steps directly:
+====================================================================================
 Create sample project and run Maven.
 https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html
 
