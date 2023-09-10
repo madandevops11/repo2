@@ -1,3 +1,0 @@
-Jenkins initial password can be found in below path:
-
-sudo cat /var/lib/jenkins/secrets/initialAdminPassword
