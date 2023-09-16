@@ -1,0 +1,81 @@
+List inventory and ping the target server:
+	1. ansible-inventory --list -y
+	2. ansible all -m ping -u <username>
+
+
+
+Setup password less authentication from ansible to target server:
+	1. ssh-keygen
+copy the pub key of master to worker in authorized key
+
+
+Sample adhoc commands:
+# ansible all -a "df -h" -u <username>
+# ansible worker1 -a "df -h" -u <username>
+# ansible workers -a "uptime" -u <username>
+
+
+Show sample playbooks:
+
+	1. Package module: Install package
+vi package-playbook.yaml
+---
+- name: Ansible playbook to install package
+  hosts: worker1
+  become: yes
+  tasks:
+    - name: Install apache httpd  (state=present is optional)
+      apt:
+        name: apache2
+        state: present
+
+	2. File module (acl)
+vi acl-playbook.yaml
+---
+- name: Ansible playbook to grant file read access to user
+  hosts: worker1
+  become: yes
+  tasks:
+    - name: Grant user joe read access to a file
+      acl:
+        path: /tmp/joe.txt
+        entity: joe
+        etype: user
+        permissions: r
+        state: present
+
+	3. File module (copy)
+	vi copy-palybook.yaml
+	---
+	- name: Ansible playbook to copy files
+	  hosts: worker1
+	  become: yes
+	  tasks:
+	    - name: Copy file with owner and permissions
+	      copy:
+	        src: /home/madan/ansible/file/acl-playbook.yaml
+	        dest: /tmp/ansible/
+	        owner: joe
+	        group: joe
+	        mode: '0644'
+	
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Ansible variables:
+ansible-playbook variable-useradd-playbook.yaml --extra-vars "username=joe"
+
+ vi variable-useradd-playbook.yaml
+
+---
+- name: Simple Variable to add user
+  hosts: worker1
+  become: yes
+  vars:
+    username: "{{ username }}"
+
+  tasks:
+  - name: Add the user {{ username }}
+    ansible.builtin.user:
+      name: "{{ username }}"
+      state: present
