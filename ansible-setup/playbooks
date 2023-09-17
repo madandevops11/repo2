@@ -14,6 +14,9 @@ Sample adhoc commands:
 # ansible worker1 -a "df -h" -u <username>
 # ansible workers -a "uptime" -u <username>
 
+---------------------------------------------------------------------
+
+To run any playbooks use command: ansible-playbook <playbookname.yaml>
 
 Show sample playbooks:
 
@@ -63,7 +66,7 @@ vi acl-playbook.yaml
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Ansible variables:
-ansible-playbook variable-useradd-playbook.yaml --extra-vars "username=joe"
+command: ansible-playbook variable-useradd-playbook.yaml --extra-vars "username=joe"
 
  vi variable-useradd-playbook.yaml
 
@@ -79,3 +82,56 @@ ansible-playbook variable-useradd-playbook.yaml --extra-vars "username=joe"
     ansible.builtin.user:
       name: "{{ username }}"
       state: present
+
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Ansible roles
+# ansible-galaxy init prerequisites
+# ansible-galaxy init apache
+# ansible-playbook stack.yaml 
+
+
+madan@madan-virtual-machine:~/ansible/roles/git-apache$ cat stack.yaml
+---
+- hosts: all
+  become: yes
+  roles:
+        -  prerequisites
+        -  apache
+	
+madan@madan-virtual-machine:~/ansible/roles/git-apache$ cat apache/tasks/main.yml
+---
+- name: install Apache web server
+  apt:
+     name=apache2
+     state=present
+     update_cache=yes
+
+
+madan@madan-virtual-machine:~/ansible/roles/git-apache$ cat prerequisites/tasks/main.yml
+---
+
+- name: Install git
+  apt:
+     name: git
+     state: present
+     update_cache: yes
+
+command: ansible-playbook stack.yaml
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Import multiple playbooks:
+
+madan@madan-virtual-machine:~/ansible/multi-playbook$ cat main.yaml
+---
+
+- import_playbook: acl-playbook.yaml
+- import_playbook: copy-playbook.yaml
+- import_playbook: package-playbook.yamlt
+
+
+Command: ansible-playbook main.yaml
+
