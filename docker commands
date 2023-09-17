@@ -1,0 +1,60 @@
+Docker cli commands:
+	1. docker ps
+	2. docker ps -a
+	3. docker images
+	4. docker run -dit ubuntu
+	5. docker stop <container id>
+	6. docker start <container id>
+	7. docker pull <image name>
+	8. docker tag <docker image id> <dockerhub username>/imagename:firstimage
+           docker tag 08d22c0ceb15 madankumardevops/ubuntu:firstimage
+
+	9. docker push <docker hub name>/<docker image name>:firstimage
+	docker tag 08d22c0ceb15 madankumardevops/ubuntu:firstimage
+	
+	10. docker export <container name>   >    <container name.tar>
+	docker export festive_morse > ubuntu.tar
+	
+
+	11. docker search
+	12. docker ps
+	13. docker kill <container name>
+	14. docker commit
+	15. docker commit <container name>
+	
+	madan@devops-virtual-machine:~$ docker commit festive_morse
+	sha256:a7baaee26601e6776593a091cd83b57cfc57f129ddcb759e4827940d0776c231
+	
+	madan@devops-virtual-machine:~$ docker images
+	REPOSITORY                TAG          IMAGE ID       CREATED         SIZE
+	<none>                    <none>       a7baaee26601   4 seconds ago   77.8MB
+	madankumardevops/ubuntu   firstimage   08d22c0ceb15   11 days ago     77.8MB
+	08d22c0ceb15              latest       08d22c0ceb15   11 days ago     77.8MB
+	ubuntu                    latest       08d22c0ceb15   11 days ago     77.8MB
+	redis                     latest       f9c173b0f012   2 weeks ago     117MB
+	hello-world               latest       feb5d9fea6a5   18 months ago   13.3kB
+	
+	madan@devops-virtual-machine:~$ docker tag a7baaee26601 madankumardevops/ubuntu:updated
+	
+	madan@devops-virtual-machine:~$ docker images
+	REPOSITORY                TAG          IMAGE ID       CREATED          SIZE
+	madankumardevops/ubuntu   updated      a7baaee26601   36 seconds ago   77.8MB
+	08d22c0ceb15              latest       08d22c0ceb15   11 days ago      77.8MB
+	ubuntu                    latest       08d22c0ceb15   11 days ago      77.8MB
+	madankumardevops/ubuntu   firstimage   08d22c0ceb15   11 days ago      77.8MB
+	redis                     latest       f9c173b0f012   2 weeks ago      117MB
+	hello-world               latest       feb5d9fea6a5   18 months ago    13.3kB
+	madan@devops-virtual-machine:~$
+	
+	
+	16. Docker port binding
+       #  docker run --name nginx -d -p 8081:80 nginx
+           8081 --> Host port
+           80 --> docker container port
+
+      #  docker run --name jenkins -d -p 8082:8080 jenkins/jenkins
+     
+
+	17. Docker detached vs foreground.
+          #  docker run -it ubuntu /bin/bash
+          #  docker run -dit ubuntu /bin/bash
