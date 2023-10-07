@@ -1,0 +1,106 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+  namespace: default
+
+data:
+  redis-config: |
+    maxmemory 3mb
+    maxmemory-policy allkeys-lru
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: cps-redis-pv-volume
+  labels:
+    type: local
+    app: cps-redis
+spec:
+  storageClassName: standard
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+ #   server:
+    path: "/data/redis"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: cps-redis
+  labels:
+    app: cps-redis
+spec:
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cps-redis
+  name: redis-service
+  namespace: default
+spec:
+  type: ClusterIP
+  ports:
+  - port: 6379
+  selector:
+    app: cps-redis
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: cps-redis
+    component: cache
+  name: cps-redis
+  namespace: default
+spec:
+  #  serviceName: redis-service
+  replicas: 1
+  selector:
+    matchLabels:
+      name: cps-redis
+  template:
+    metadata:
+      labels:
+        name: cps-redis
+        component: cache
+    spec:
+      containers:
+      - name: cps-redis
+        image: redis:latest
+        ports:
+        - containerPort: 6379
+          name: cps-redis
+        envFrom:
+          - configMapRef:
+              name: redis-config
+        volumeMounts:
+        - mountPath: /data/redis
+          name: cps-redis-pv-volume
+      volumes:
+        - name: cps-redis-pv-volume
+          persistentVolumeClaim:
+            claimName: cps-redis 
+
+
+=============================================================================
+
+Commands:
+First create a file with above lines and save as redis-deployment.yaml
+
+kubectl apply -f redis-deployment.yaml
+
+kubectl exec -it cps-redis-58447b9f79-msnpc /bin/bash
+
+redis-cli
+
+ping
